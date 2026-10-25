@@ -136,11 +136,12 @@ class TestMCPDocsPublisher:
         assert result.approval_url == "https://aiagentserver.onrender.com/approve/doc-action-456"
         assert result.target_url == "https://docs.google.com/document/d/1abc_doc_id/edit"
 
+        from src.delivery.doc_formatter import format_for_google_doc
         mock_client.call_tool.assert_called_once_with(
             "docs_preview_append",
             {
                 "document_url_or_id": "https://docs.google.com/document/d/1abc_doc_id/edit",
-                "text": "# Pulse Markdown",
+                "text": format_for_google_doc("# Pulse Markdown"),
                 "separator": "blank_line"
             }
         )

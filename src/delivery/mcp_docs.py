@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Optional, Any, Dict
 
 from src.config import config
+from src.delivery.doc_formatter import format_for_google_doc
 from src.delivery.mcp_client import (
     DeliveryError,
     DeliveryApprovalResult,
@@ -96,10 +97,13 @@ class MCPDocsPublisher:
                 client = await self._get_client()
                 await client.start()
 
+                # Format raw markdown for clean Google Docs presentation
+                formatted_text = format_for_google_doc(content_md)
+
                 # Call tool docs_preview_append
                 tool_args: dict[str, Any] = {
                     "document_url_or_id": target,
-                    "text": content_md,
+                    "text": formatted_text,
                     "separator": separator,
                 }
                 if tab_id:
