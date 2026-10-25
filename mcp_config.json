@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "google-workspace": {
+      "serverUrl": "https://aiagentserver.onrender.com/sse",
+      "headers": {
+        "Authorization": "Bearer ${MCP_AUTH_TOKEN}"
+      }
+    },
+    "google-workspace-local": {
+      "command": "node",
+      "args": ["/Users/shashikiran/Desktop/mcpserver/dist/index.js", "--transport", "stdio"],
+      "env": {
+        "APP_ENV": "local",
+        "PORT": "3000",
+        "DB_PATH": "/Users/shashikiran/Desktop/mcpserver/data/mcp.sqlite",
+        "GOOGLE_CLIENT_ID": "${GOOGLE_CLIENT_ID}",
+        "GOOGLE_CLIENT_SECRET": "${GOOGLE_CLIENT_SECRET}",
+        "GOOGLE_REDIRECT_URI": "http://localhost:3000/oauth2callback"
+      }
+    }
+  }
+}

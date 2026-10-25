@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Groww App Review Pulse — Telemetry Dashboard</title>
+  <meta name="description" content="Obsidian Telemetry Dashboard for Groww App Review Pulse Intelligence Agent"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📈</text></svg>">
+  
+  <!-- Fonts & Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+
+  <!-- Tailwind CSS CDN + Obsidian Telemetry Design System Config -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-primary-fixed": "#002114",
+            "inverse-surface": "#e0e3e5",
+            "surface-tint": "#00e29f",
+            "on-secondary-container": "#abbbc5",
+            "surface-container-lowest": "#0b0f11",
+            "secondary": "#b9c9d3",
+            "surface-variant": "#313538",
+            "primary-fixed": "#45ffb9",
+            "background": "#101416",
+            "on-tertiary-fixed-variant": "#004c69",
+            "on-tertiary-container": "#006083",
+            "on-primary-container": "#006746",
+            "inverse-on-surface": "#2d3133",
+            "inverse-primary": "#006c4a",
+            "surface-bright": "#363a3c",
+            "on-error-container": "#ffdad6",
+            "surface-container": "#1c2022",
+            "on-primary-fixed-variant": "#005237",
+            "on-surface": "#e0e3e5",
+            "tertiary-fixed-dim": "#7bd0ff",
+            "on-secondary-fixed-variant": "#3a4951",
+            "on-background": "#e0e3e5",
+            "surface-container-highest": "#313538",
+            "on-error": "#690005",
+            "surface-container-low": "#181c1e",
+            "secondary-container": "#3c4b54",
+            "secondary-fixed-dim": "#b9c9d3",
+            "primary": "#adffd5",
+            "on-surface-variant": "#b9cbbf",
+            "on-secondary-fixed": "#0e1d25",
+            "on-primary": "#003825",
+            "surface-container-high": "#262b2d",
+            "outline-variant": "#3b4a41",
+            "primary-container": "#05eea8",
+            "primary-fixed-dim": "#00e29f",
+            "on-tertiary-fixed": "#001e2c",
+            "tertiary-container": "#9ad9ff",
+            "tertiary-fixed": "#c4e7ff",
+            "surface": "#101416",
+            "secondary-fixed": "#d5e5f0",
+            "error-container": "#93000a",
+            "outline": "#84958a",
+            "on-secondary": "#23323b",
+            "tertiary": "#dcf0ff",
+            "error": "#ff3b5c",
+            "surface-dim": "#101416",
+            "on-tertiary": "#00354a"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            "body-lg": ["JetBrains Mono", "monospace"],
+            "body-md": ["JetBrains Mono", "monospace"],
+            "body-sm": ["JetBrains Mono", "monospace"],
+            "label-md": ["JetBrains Mono", "monospace"],
+            "label-xs": ["JetBrains Mono", "monospace"],
+            "headline-lg": ["Space Grotesk", "sans-serif"],
+            "headline-sm": ["Space Grotesk", "sans-serif"],
+            "display-lg": ["Space Grotesk", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    @layer base {
+      html { scroll-behavior: smooth; }
+      html, body { margin: 0; padding: 0; }
+    }
+    ::-webkit-scrollbar { display: none; }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+    .animate-telemetry-pulse {
+      animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  </style>
+</head>
+
+<body class="bg-background font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary">
+  
+  <!-- LEFT FIXED TELEMETRY SIDEBAR -->
+  <aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest border-r border-outline-variant/30 z-50 flex flex-col justify-between">
+    <div class="flex flex-col">
+      <!-- Brand Header -->
+      <div class="h-16 px-4 flex items-center gap-3 border-b border-outline-variant/30 bg-surface-container-lowest">
+        <div class="w-8 h-8 rounded bg-primary-container flex items-center justify-center text-on-primary font-bold text-lg shadow-[0_0_12px_rgba(5,238,168,0.5)]">
+          📈
+        </div>
+        <div class="flex flex-col">
+          <span class="font-headline-sm text-base uppercase tracking-tight text-on-surface leading-none font-bold">Groww Pulse</span>
+          <span class="font-label-xs text-[10px] text-primary tracking-widest uppercase">Review Telemetry</span>
+        </div>
+      </div>
+
+      <div class="px-4 pt-4 pb-2">
+        <span class="font-label-xs text-[10px] uppercase tracking-wider text-outline font-bold">Operational Views</span>
+      </div>
+
+      <!-- Navigation Tabs (Only functional views) -->
+      <nav class="flex flex-col gap-1 px-2" id="sidebar-nav">
+        <button class="nav-tab-btn flex items-center gap-2.5 px-3 py-2 rounded transition-all bg-primary-container text-on-primary font-bold shadow-[0_0_12px_rgba(5,238,168,0.25)] text-left w-full cursor-pointer" data-target="dashboard">
+          <span class="material-symbols-outlined text-[18px]">grid_view</span>
+          <span class="font-body-md text-sm">Dashboard</span>
+        </button>
+        <button class="nav-tab-btn flex items-center gap-2.5 px-3 py-2 rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all text-left w-full cursor-pointer" data-target="customer-themes">
+          <span class="material-symbols-outlined text-[18px]">bubble_chart</span>
+          <span class="font-body-md text-sm">Customer Themes</span>
+        </button>
+        <button class="nav-tab-btn flex items-center gap-2.5 px-3 py-2 rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all text-left w-full cursor-pointer" data-target="trend-analytics">
+          <span class="material-symbols-outlined text-[18px]">insights</span>
+          <span class="font-body-md text-sm">Trend Analytics</span>
+        </button>
+        <button class="nav-tab-btn flex items-center gap-2.5 px-3 py-2 rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all text-left w-full cursor-pointer" data-target="delivery-logs">
+          <span class="material-symbols-outlined text-[18px]">terminal</span>
+          <span class="font-body-md text-sm">Delivery Logs</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Sidebar Footer -->
+    <div class="p-3 border-t border-outline-variant/30">
+      <div class="p-2.5 bg-surface-container-low rounded border border-outline-variant/20 flex items-center justify-between">
+        <div class="flex flex-col">
+          <span class="font-label-xs text-[10px] uppercase text-outline">Stream Engine</span>
+          <span class="font-body-sm text-xs text-on-surface font-mono" id="sidebar-engine-version">v2.6.4-stable</span>
+        </div>
+        <span class="inline-flex items-center justify-center w-2 h-2 rounded-full bg-primary-container shadow-[0_0_8px_rgba(5,238,168,0.8)] animate-telemetry-pulse"></span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <div class="pl-64">
+    
+    <!-- STICKY TOPBAR -->
+    <header class="fixed top-0 left-64 right-0 h-16 bg-surface/90 backdrop-blur-md border-b border-outline-variant/30 z-40 flex items-center justify-between px-6">
+      <div class="flex items-center gap-4">
+        <!-- Live Play Store Rating Badge -->
+        <div class="flex items-center gap-1.5 bg-surface-container-low px-2.5 py-1 rounded border border-outline-variant/30">
+          <div class="flex items-center gap-1 px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-xs text-xs">
+            <span class="material-symbols-outlined text-[14px] text-primary">android</span>
+            <span id="top-gp-rating">Google Play 4.8</span>
+          </div>
+        </div>
+
+        <!-- Week Dropdown Selector (Strict YYYY-WXX Format) -->
+        <div class="relative flex items-center">
+          <select id="week-selector" class="appearance-none bg-surface-container-low text-on-surface font-label-md text-xs pl-3 pr-8 py-1.5 rounded border border-outline-variant/40 focus:outline-none focus:border-primary-container transition-colors cursor-pointer font-mono font-bold">
+            <option value="2026-W40">2026-W40</option>
+          </select>
+          <span class="material-symbols-outlined text-[16px] text-on-surface-variant absolute right-2 pointer-events-none">expand_more</span>
+        </div>
+      </div>
+
+      <!-- Right Telemetry Status & User Avatar -->
+      <div class="flex items-center gap-4">
+        <!-- Live MCP Connection Badge -->
+        <div class="flex items-center gap-2 px-3 py-1 bg-surface-container-low rounded border border-outline-variant/30 shadow-[0_0_12px_rgba(5,238,168,0.08)]">
+          <span class="inline-block w-2 h-2 rounded-full bg-primary-container shadow-[0_0_8px_rgba(5,238,168,0.9)] animate-telemetry-pulse"></span>
+          <span id="top-mcp-badge" class="font-label-xs text-[11px] text-primary font-bold tracking-tight uppercase font-mono">Connected to MCP</span>
+        </div>
+
+        <!-- User Profile Pill -->
+        <div class="flex items-center gap-2.5 pl-2 border-l border-outline-variant/30">
+          <div class="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant flex items-center justify-center text-primary font-bold text-xs font-mono">
+            SK
+          </div>
+          <div class="hidden xl:flex flex-col text-left">
+            <span class="font-label-md text-xs text-on-surface leading-tight font-bold">Lead Analyst</span>
+            <span class="font-label-xs text-[10px] text-outline leading-tight font-mono">SYS-ADMIN</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN SCROLLABLE CONTENT AREA -->
+    <main class="w-full pt-16 bg-background min-h-screen">
+      
+      <!-- ============================================================= -->
+      <!-- SECTION 1: MAIN DASHBOARD -->
+      <!-- ============================================================= -->
+      <section id="view-dashboard" class="flex flex-col w-full p-6 space-y-6 scroll-mt-16">
+        
+        <!-- TOP ACTION BAR & BREADCRUMBS -->
+        <section class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-surface-container-low p-4 rounded border border-outline-variant/30">
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center gap-2 font-label-xs text-[11px] text-outline uppercase tracking-wider font-mono">
+              <span>Groww App</span>
+              <span class="text-outline-variant">/</span>
+              <span>Weekly Pulse</span>
+              <span class="text-outline-variant">/</span>
+              <span id="breadcrumb-week" class="text-primary font-bold">2026-W40</span>
+              <span id="breadcrumb-mcp-status" class="px-1.5 py-0.5 rounded bg-surface-container-high text-primary-fixed-dim text-[10px]">MCP Synced</span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <h1 class="font-headline-lg text-2xl text-on-surface tracking-tight font-bold">Review Pulse &amp; Intelligence</h1>
+              <span class="font-label-xs text-xs text-outline font-normal font-mono">v14.8.x Telemetry Core</span>
+            </div>
+          </div>
+
+          <!-- Active Ingestion Source Badge -->
+          <div class="flex items-center gap-3">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-surface-container-lowest rounded border border-outline-variant/30 text-xs font-label-xs font-mono text-on-surface">
+              <span class="material-symbols-outlined text-[15px] text-primary">android</span>
+              <span class="font-bold">Google Play Store</span>
+              <span class="text-outline text-[10px] uppercase tracking-wider pl-1 border-l border-outline-variant/30">Primary Source</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4-COLUMN KPI TELEMETRY METRIC GRID -->
+        <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          <!-- CARD 1: Total Reviews -->
+          <div class="relative bg-surface-container-low p-4 rounded border border-outline-variant/30 hover:border-primary-container/40 transition-all flex flex-col justify-between group overflow-hidden">
+            <div class="flex items-center justify-between font-label-xs text-xs uppercase text-outline">
+              <span class="tracking-wider">Total reviews this week</span>
+              <span class="font-mono text-outline-variant text-[11px]" id="kpi-id-reviews">ID // TR-W40</span>
+            </div>
+            <div class="my-3 flex items-end justify-between">
+              <div>
+                <div id="kpi-total-reviews" class="font-display-lg text-4xl text-on-surface font-bold leading-none tracking-tight font-headline-lg">2,840</div>
+              </div>
+              <!-- Sparkline mini visualization -->
+              <div class="w-20 h-10">
+                <svg class="w-full h-full overflow-visible" viewBox="0 0 80 40">
+                  <path d="M0,32 Q15,35 25,24 T50,20 T75,6" fill="none" stroke="rgba(5,238,168,0.3)" stroke-width="2"></path>
+                  <path d="M0,32 Q15,35 25,24 T50,20 T75,6 L75,40 L0,40 Z" fill="url(#sparkline-grad)" opacity="0.3"></path>
+                  <circle class="fill-primary-container shadow-[0_0_8px_#05eea8]" cx="75" cy="6" r="3"></circle>
+                  <defs>
+                    <linearGradient id="sparkline-grad" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0%" stop-color="#05eea8"></stop>
+                      <stop offset="100%" stop-color="#05eea8" stop-opacity="0"></stop>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
+            </div>
+            <div class="pt-2 border-t border-outline-variant/20 flex items-center justify-between text-outline font-label-xs text-[11px] font-mono">
+              <span id="kpi-peak-day">Status: Ingested</span>
+              <span class="text-on-surface-variant" id="kpi-ingest-rate">Active Dataset</span>
+            </div>
+          </div>
+
+          <!-- CARD 2: Store Rating This Week + WoW Delta -->
+          <div class="relative bg-surface-container-low p-4 rounded border border-outline-variant/30 hover:border-primary-container/40 transition-all flex flex-col justify-between group overflow-hidden">
+            <div class="flex items-center justify-between font-label-xs text-xs uppercase text-outline">
+              <span class="tracking-wider">Store rating this week</span>
+              <span class="font-mono text-outline-variant text-[11px]">AGG // RTG-8</span>
+            </div>
+            <div class="my-3 flex items-end justify-between">
+              <div>
+                <div class="flex items-baseline gap-2">
+                  <span id="kpi-rating-val" class="font-display-lg text-4xl text-tertiary-fixed-dim font-bold leading-none tracking-tight font-headline-lg">4.30 ★</span>
+                </div>
+                <div class="flex items-center gap-1.5 mt-2">
+                  <span id="kpi-rating-delta" class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-primary-container/15 text-primary text-xs font-mono font-bold">
+                    <span class="material-symbols-outlined text-[13px]">north_east</span>
+                    +3.2% WoW
+                  </span>
+                  <span id="kpi-rating-prev" class="text-outline font-body-sm text-xs font-mono">prev week</span>
+                </div>
+              </div>
+              <!-- Dual Star Rating Ring -->
+              <div class="relative w-11 h-11 flex items-center justify-center">
+                <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                  <path class="text-surface-container-highest" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+                  <path id="kpi-rating-ring" class="text-primary-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="86, 100" stroke-linecap="round" stroke-width="3.5"></path>
+                </svg>
+                <span id="kpi-rating-pct" class="absolute text-[11px] font-bold text-on-surface font-mono">86%</span>
+              </div>
+            </div>
+            <div class="pt-2 border-t border-outline-variant/20 flex items-center justify-between text-outline font-label-xs text-[11px] font-mono">
+              <span class="text-on-surface-variant">Google Play: <strong class="text-on-surface" id="kpi-android-rtg">4.29 ★</strong></span>
+              <span class="text-outline font-mono">Live Rating</span>
+            </div>
+          </div>
+
+          <!-- CARD 3: Dominant Sentiment -->
+          <div class="relative bg-surface-container-low p-4 rounded border border-outline-variant/30 hover:border-primary-container/40 transition-all flex flex-col justify-between group overflow-hidden">
+            <div class="flex items-center justify-between font-label-xs text-xs uppercase text-outline">
+              <span class="tracking-wider">Dominant Sentiment</span>
+              <span id="kpi-sentiment-badge" class="px-1.5 py-0.5 rounded bg-primary-container/20 text-primary font-bold text-[10px] font-mono">Positive (64%)</span>
+            </div>
+            <div class="my-3">
+              <!-- Distribution Stack Bar -->
+              <div class="w-full h-3 rounded-sm bg-surface-container-highest overflow-hidden flex gap-0.5 p-0.5">
+                <div id="kpi-sentiment-bar-pos" class="h-full bg-primary-container rounded-sm shadow-[0_0_8px_rgba(5,238,168,0.5)] transition-all" style="width: 64%" title="Positive"></div>
+                <div id="kpi-sentiment-bar-neu" class="h-full bg-amber-400 rounded-sm transition-all" style="width: 21%" title="Neutral"></div>
+                <div id="kpi-sentiment-bar-neg" class="h-full bg-error rounded-sm transition-all" style="width: 15%" title="Negative"></div>
+              </div>
+              <div class="flex items-center justify-between mt-3 text-xs font-mono">
+                <span class="flex items-center gap-1 text-primary">
+                  <span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+                  <span id="kpi-sentiment-pos-pct">64% Pos</span>
+                </span>
+                <span class="flex items-center gap-1 text-amber-300">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                  <span id="kpi-sentiment-neu-pct">21% Neu</span>
+                </span>
+                <span class="flex items-center gap-1 text-error">
+                  <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                  <span id="kpi-sentiment-neg-pct">15% Neg</span>
+                </span>
+              </div>
+            </div>
+            <div class="pt-2 border-t border-outline-variant/20 flex items-center justify-between text-outline font-label-xs text-[11px] font-mono">
+              <span>Weighted Polarity</span>
+              <span id="kpi-polarity-score" class="text-primary font-bold">+0.49</span>
+            </div>
+          </div>
+
+          <!-- CARD 4: Delivery Pipeline (MCP) -->
+          <div class="relative bg-surface-container-low p-4 rounded border border-outline-variant/30 hover:border-primary-container/40 transition-all flex flex-col justify-between group overflow-hidden">
+            <div class="flex items-center justify-between font-label-xs text-xs uppercase text-outline">
+              <span class="tracking-wider">Delivery Pipeline (MCP)</span>
+              <span class="inline-block w-2 h-2 rounded-full bg-primary-container animate-telemetry-pulse"></span>
+            </div>
+            <div class="my-1 space-y-2">
+              <div class="flex items-center justify-between p-1.5 rounded bg-surface-container border border-outline-variant/20">
+                <div class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[16px] text-tertiary-fixed-dim">description</span>
+                  <span class="font-body-sm text-xs text-on-surface truncate max-w-[110px]">Google Doc Pulse</span>
+                </div>
+                <a id="kpi-doc-link" href="#" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary-container/15 text-primary text-[10px] font-mono hover:bg-primary-container hover:text-on-primary transition-colors cursor-pointer">
+                  <span class="material-symbols-outlined text-[12px]">open_in_new</span>
+                  <span>View Doc</span>
+                </a>
+              </div>
+              <div class="flex items-center justify-between p-1.5 rounded bg-surface-container border border-outline-variant/20">
+                <div class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[16px] text-primary">mark_email_read</span>
+                  <span class="font-body-sm text-xs text-on-surface truncate max-w-[110px]">Email Recipient</span>
+                </div>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary-container/20 text-primary text-[10px] font-bold font-mono">
+                  Verified
+                </span>
+              </div>
+            </div>
+            <div class="pt-2 border-t border-outline-variant/20 flex items-center justify-between text-outline font-label-xs text-[11px] font-mono">
+              <span>MCP Stream: Active</span>
+              <span id="kpi-mcp-queue" class="font-mono text-on-surface-variant">Queue: Ready</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2-COLUMN CENTRAL ANALYTICS SUITE (7 Cols / 5 Cols) -->
+        <section class="grid grid-cols-1 xl:grid-cols-12 gap-4">
+          <!-- LEFT COLUMN (7 Cols): Trajectory Chart & VOC Feed -->
+          <div class="xl:col-span-7 flex flex-col gap-4">
+            
+            <!-- TRAJECTORY CHART CARD -->
+            <div class="bg-surface-container-low p-4 rounded border border-outline-variant/30 flex flex-col">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-outline-variant/20">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary-container text-[18px]">stacked_line_chart</span>
+                    <h2 class="font-headline-sm text-base font-bold text-on-surface">Weekly Sentiment &amp; Rating Trajectory</h2>
+                  </div>
+                  <p class="font-body-sm text-xs text-outline mt-0.5 font-mono">Click any week bar to inspect historical telemetry</p>
+                </div>
+                <!-- Legend Bar -->
+                <div class="flex items-center gap-3 text-[11px] font-mono text-outline">
+                  <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-primary-container"></span>Pos</span>
+                  <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-amber-400"></span>Neu</span>
+                  <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-sm bg-error"></span>Neg</span>
+                  <span class="flex items-center gap-1"><span class="w-2.5 h-0.5 bg-tertiary-fixed-dim"></span>Rating</span>
+                </div>
+              </div>
+
+              <!-- Chart Viewport SVG (Dynamically Rendered by JS) -->
+              <div class="relative w-full h-64 bg-surface-container-lowest rounded border border-outline-variant/20 p-2 flex items-end mt-3" id="trajectory-chart-container">
+                <svg id="trajectory-svg" class="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 700 220">
+                  <!-- Injected dynamically by app.js -->
+                </svg>
+              </div>
+            </div>
+
+            <!-- VOICE OF CUSTOMER FEED COMPONENT -->
+            <div class="bg-surface-container-low p-4 rounded border border-outline-variant/30 flex flex-col space-y-4">
+              <!-- Feed Header -->
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-outline-variant/20">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary-container text-[20px]">forum</span>
+                  <h2 class="font-headline-sm text-base font-bold text-on-surface">Voice of Customer Stream</h2>
+                  <span id="voc-total-badge" class="px-2 py-0.5 rounded bg-surface-container-high text-primary font-mono text-xs font-bold">Live Stream</span>
+                </div>
+              </div>
+
+              <!-- Filter Pill Navigation (All Functional) -->
+              <div class="flex flex-wrap items-center gap-1.5 text-xs font-mono" id="feed-filter-bar">
+                <button class="voc-filter-pill px-2.5 py-1 rounded bg-primary-container text-on-primary font-bold shadow-[0_0_8px_rgba(5,238,168,0.3)] cursor-pointer transition-colors" data-sentiment="all">All</button>
+                <button class="voc-filter-pill px-2.5 py-1 rounded bg-surface-container text-error hover:bg-error/15 border border-error/30 cursor-pointer transition-colors" data-sentiment="negative">Critical 1-2★</button>
+                <button class="voc-filter-pill px-2.5 py-1 rounded bg-surface-container text-primary hover:bg-primary/10 border border-outline-variant/30 cursor-pointer transition-colors" data-sentiment="positive">Praise 5★</button>
+                <button class="voc-filter-pill px-2.5 py-1 rounded bg-surface-container text-amber-300 hover:bg-amber-400/10 border border-outline-variant/30 cursor-pointer transition-colors" data-sentiment="neutral">Neutral 3★</button>
+              </div>
+
+              <!-- REVIEWS STREAM CONTAINER -->
+              <div class="space-y-3" id="reviews-feed-container">
+                <!-- Dynamically populated by app.js -->
+                <div class="p-6 text-center text-outline font-mono text-xs">Loading customer reviews stream...</div>
+              </div>
+
+              <!-- Pagination Footer (Functional) -->
+              <div class="flex items-center justify-between pt-2 border-t border-outline-variant/20 font-mono text-xs text-outline">
+                <span id="reviews-page-info">Page 1 of 1</span>
+                <div class="flex items-center gap-2">
+                  <button id="btn-prev-page" class="px-2.5 py-1 rounded bg-surface-container border border-outline-variant/30 hover:bg-surface-container-high text-on-surface disabled:opacity-40 cursor-pointer" disabled>Previous</button>
+                  <button id="btn-next-page" class="px-2.5 py-1 rounded bg-surface-container border border-outline-variant/30 hover:bg-surface-container-high text-on-surface disabled:opacity-40 cursor-pointer">Next</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- RIGHT COLUMN (5 Cols): Friction Themes & Live Document Hub -->
+          <div class="xl:col-span-5 flex flex-col gap-4">
+            
+            <!-- TOP FRICTION & FEEDBACK THEMES CARD -->
+            <div class="bg-surface-container-low p-4 rounded border border-outline-variant/30 flex flex-col space-y-4">
+              <div class="flex items-start justify-between pb-3 border-b border-outline-variant/20">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary-container text-[20px]">bubble_chart</span>
+                    <h2 class="font-headline-sm text-base font-bold text-on-surface">Top Friction &amp; Feedback Themes</h2>
+                  </div>
+                  <p class="font-body-sm text-xs text-outline mt-0.5 font-mono">Synthesized via AI Agent Pipeline</p>
+                </div>
+                <span id="themes-week-rank-badge" class="px-2 py-0.5 rounded bg-surface-container-high text-primary-fixed-dim text-xs font-mono font-bold">W40 RANKS</span>
+              </div>
+
+              <!-- 3 THEMES CONTAINER -->
+              <div class="space-y-3" id="themes-list-container">
+                <!-- Injected dynamically by app.js -->
+              </div>
+            </div>
+
+            <!-- GOOGLE WORKSPACE DELIVERY CARD (Fully Functional link & verified status) -->
+            <div class="bg-surface-container-low p-4 rounded border border-outline-variant/30 flex flex-col space-y-4 relative overflow-hidden">
+              <div class="flex items-center justify-between pb-3 border-b border-outline-variant/20">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary-container text-[20px]">hub</span>
+                  <div>
+                    <h2 class="font-headline-sm text-base font-bold text-on-surface">Google Workspace Delivery</h2>
+                    <span class="font-label-xs text-[11px] text-outline font-mono">Automated Delivery Artifacts</span>
+                  </div>
+                </div>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary-container/20 text-primary font-mono text-[11px] font-bold">
+                  MCP CONNECTED
+                </span>
+              </div>
+
+              <!-- Active Artifact Payload -->
+              <div class="p-3 rounded bg-surface-container-lowest border border-outline-variant/30 space-y-3">
+                <div class="flex items-start justify-between">
+                  <div class="flex items-center gap-2.5">
+                    <div class="p-2 rounded bg-surface-container-high text-primary">
+                      <span class="material-symbols-outlined text-[24px]">assignment</span>
+                    </div>
+                    <div class="flex flex-col">
+                      <span id="delivery-doc-title" class="font-body-md text-xs font-bold text-on-surface">Groww Weekly Review Pulse</span>
+                      <span class="font-label-xs text-[11px] text-outline font-mono">Live Google Doc &amp; Gmail Channel</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Target Distribution Channels -->
+                <div class="flex flex-col gap-1.5">
+                  <span class="font-label-xs text-[11px] text-outline font-mono">Configured Recipient:</span>
+                  <div class="flex flex-wrap gap-1.5">
+                    <span class="px-2 py-0.5 rounded bg-surface-container text-primary font-mono text-[11px]">shashikiran9035@gmail.com</span>
+                  </div>
+                </div>
+
+                <!-- Action Button: Opens the live Google Doc -->
+                <a id="btn-view-doc-hub" class="w-full py-2.5 px-4 rounded bg-primary-container text-on-primary font-mono text-xs font-bold flex items-center justify-center gap-2 hover:bg-primary transition-all shadow-[0_0_12px_rgba(5,238,168,0.25)] cursor-pointer mt-2" href="#" target="_blank">
+                  <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+                  <span>Open Live Google Doc</span>
+                </a>
+              </div>
+
+              <!-- Audit Trail -->
+              <div class="font-label-xs text-[11px] text-outline font-mono flex items-center justify-between border-t border-outline-variant/20 pt-2">
+                <span>Audit: #MCP-VERIFIED</span>
+                <span>Transport: Stdio Local</span>
+              </div>
+            </div>
+
+            <!-- EXECUTIVE TAKEAWAYS SUMMARY CARD -->
+            <div class="bg-surface-container-low p-4 rounded border border-outline-variant/30 flex flex-col space-y-3">
+              <div class="flex items-center gap-2 pb-2 border-b border-outline-variant/20">
+                <span class="material-symbols-outlined text-primary-container text-[18px]">summarize</span>
+                <h3 class="font-headline-sm text-sm font-bold text-on-surface">Weekly Executive Digest</h3>
+              </div>
+              <p id="dashboard-exec-summary" class="font-body-sm text-xs text-on-surface leading-relaxed">
+                Loading executive digest for the active week...
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- SECTION 2: CUSTOMER THEMES DEEP DIVE -->
+      <!-- ============================================================= -->
+      <section id="view-customer-themes" class="flex flex-col w-full p-6 space-y-6 scroll-mt-16">
+        <div class="bg-surface-container-low p-6 rounded border border-outline-variant/30">
+          <div class="flex items-center justify-between pb-4 border-b border-outline-variant/30">
+            <div>
+              <h2 class="font-headline-lg text-xl font-bold text-on-surface">Customer Themes &amp; Action Plan</h2>
+              <p class="font-body-sm text-xs text-outline mt-1 font-mono">Detailed breakdown of friction categories, review clusters, and assigned engineering squads</p>
+            </div>
+            <span class="px-2.5 py-1 rounded bg-primary-container/20 text-primary font-mono text-xs font-bold" id="themes-view-week-badge">2026-W40</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6" id="themes-detailed-grid">
+            <!-- Dynamically injected -->
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-outline-variant/30">
+            <h3 class="font-headline-sm text-base font-bold text-on-surface mb-3 flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary-container text-[20px]">task_alt</span>
+              <span>Recommended Squad Action Items</span>
+            </h3>
+            <div class="space-y-2.5" id="themes-action-items-list">
+              <!-- Dynamically injected -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- SECTION 3: TREND ANALYTICS -->
+      <!-- ============================================================= -->
+      <section id="view-trend-analytics" class="flex flex-col w-full p-6 space-y-6 scroll-mt-16">
+        <div class="bg-surface-container-low p-6 rounded border border-outline-variant/30">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-outline-variant/30">
+            <div>
+              <h2 class="font-headline-lg text-xl font-bold text-on-surface">Longitudinal Trend Analytics</h2>
+              <p class="font-body-sm text-xs text-outline mt-1 font-mono">Multi-week sentiment trajectory, star ratings distribution, and week-over-week performance matrix</p>
+            </div>
+            <span class="px-2.5 py-1 rounded bg-surface-container font-mono text-xs font-bold text-primary border border-outline-variant/30 self-start sm:self-auto">2026-W20 to Latest Available</span>
+          </div>
+
+          <div class="overflow-x-auto mt-6">
+            <table class="w-full text-left font-mono text-xs border border-outline-variant/20 rounded">
+              <thead class="bg-surface-container border-b border-outline-variant/30 text-outline uppercase font-bold">
+                <tr>
+                  <th class="p-3">Week</th>
+                  <th class="p-3">Total Reviews</th>
+                  <th class="p-3">Store Rating</th>
+                  <th class="p-3">WoW Delta</th>
+                  <th class="p-3">Dominant Sentiment</th>
+                  <th class="p-3">Positive %</th>
+                  <th class="p-3">Neutral %</th>
+                  <th class="p-3">Negative %</th>
+                </tr>
+              </thead>
+              <tbody id="trends-table-body" class="divide-y divide-outline-variant/15 text-on-surface">
+                <!-- Dynamically injected -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- SECTION 4: DELIVERY LOGS & LIVE PIPELINE TERMINAL -->
+      <!-- ============================================================= -->
+      <section id="view-delivery-logs" class="flex flex-col w-full p-6 space-y-6 scroll-mt-16">
+        <div class="bg-surface-container-low p-6 rounded border border-outline-variant/30">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-outline-variant/30">
+            <div>
+              <h2 class="font-headline-lg text-xl font-bold text-on-surface">Agent Pipeline Terminal &amp; Delivery Logs</h2>
+              <p class="font-body-sm text-xs text-outline mt-1 font-mono">Live telemetry output and agent execution console</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <span id="pipeline-status-badge" class="px-2.5 py-1 rounded bg-surface-container font-mono text-xs font-bold text-primary">Status: Idle</span>
+              <button id="btn-trigger-run" class="px-4 py-2 rounded bg-primary-container text-on-primary font-mono text-xs font-bold hover:bg-primary transition-all flex items-center gap-1.5 shadow-[0_0_12px_rgba(5,238,168,0.3)] cursor-pointer">
+                <span class="material-symbols-outlined text-[16px]">play_arrow</span>
+                <span>Run Pipeline Now</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Terminal Container -->
+          <div class="mt-4 bg-surface-container-lowest border border-outline-variant/30 rounded p-4 font-mono text-xs text-on-surface min-h-[360px] max-h-[500px] overflow-y-auto" id="terminal-logs">
+            <div class="text-outline">[00:00:00] Agent pipeline terminal connected. Ready for execution.</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="/static/app.js"></script>
+</body>
+</html>

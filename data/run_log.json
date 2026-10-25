@@ -1,0 +1,25 @@
+[
+  {
+    "timestamp": "2026-10-25T12:37:43.505236+00:00",
+    "week": "2026-W40",
+    "success": true,
+    "reviews_scraped": 877,
+    "reviews_clean": 89,
+    "reviews_noise": 773,
+    "reviews_spam": 0,
+    "reviews_excluded_language": 14,
+    "top_themes": [
+      "Trading & Order Execution",
+      "Usability & Positive Feedback",
+      "Customer Support & Service"
+    ],
+    "doc_url": null,
+    "docs_action_id": null,
+    "docs_approval_url": null,
+    "gmail_action_id": null,
+    "draft_id": null,
+    "gmail_approval_url": null,
+    "errors": [],
+    "duration_seconds": 3.65
+  }
+]

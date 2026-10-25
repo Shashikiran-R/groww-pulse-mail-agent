@@ -1,0 +1,29 @@
+# Environment & Secrets (NEVER COMMIT SENSITIVE KEYS)
+.env
+.env.*
+!.env.example
+credentials/
+
+# Python & Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Testing, Coverage & IDE
+.pytest_cache/
+.coverage
+htmlcov/
+.idea/
+.vscode/
+.DS_Store
+
+# Local design drafts / scratch
+scratch/
+stitch_groww_review_pulse_dashboard/
+
+# Logs
+*.log

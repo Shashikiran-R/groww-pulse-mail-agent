@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Groww App Review Pulse Agent — Executive Intelligence Dashboard</title>
+  <meta name="description" content="Weekly executive pulse, verbatim review quotes, theme clustering, and automated delivery for Groww mobile store reviews.">
+  <link rel="stylesheet" href="/static/styles.css?v=3">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📈</text></svg>">
+</head>
+<body>
+  <div class="app-wrapper">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand-section">
+        <div class="brand-logo-badge">
+          <svg viewBox="0 0 24 24">
+            <path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>
+            Groww App Review Pulse
+            <span class="brand-tag">Intelligence Agent</span>
+          </h1>
+          <p>Google Play &amp; Apple App Store • 8–12 Week Lookback Window</p>
+        </div>
+      </div>
+
+      <div class="header-status-pills">
+        <div class="status-pill">
+          <span class="pulse-dot"></span>
+          <span>LLM: <strong id="llm-model-name">Groq (gpt-oss-120b)</strong></span>
+        </div>
+        <div class="status-pill">
+          <span class="pulse-dot"></span>
+          <span>MCP: <strong id="mcp-status-text">aiagentserver.onrender.com</strong></span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="btn-open-trigger" class="btn btn-primary">
+          <span>🚀</span>
+          <span>Run Pipeline</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Metrics Ribbon -->
+    <section class="metrics-ribbon">
+      <div class="metric-card">
+        <div class="metric-info">
+          <p>Total Reviews This Week</p>
+          <h3 id="metric-total-reviews">877</h3>
+        </div>
+        <div class="metric-badge">📊</div>
+      </div>
+      <div class="metric-card amber">
+        <div class="metric-info">
+          <p>Store Rating This Week</p>
+          <h3 id="metric-avg-rating"><span id="metric-rating-val">4.47 ★</span> <span id="metric-rating-delta" class="wow-delta positive">▲ +3.0% WoW</span></h3>
+        </div>
+        <div class="metric-badge">⭐</div>
+      </div>
+      <div class="metric-card indigo">
+        <div class="metric-info">
+          <p>Dominant Sentiment</p>
+          <h3 id="metric-sentiment">Positive (49%)</h3>
+        </div>
+        <div class="metric-badge">💬</div>
+      </div>
+      <div class="metric-card sky">
+        <div class="metric-info">
+          <p>Active Weekly Pulse</p>
+          <h3 id="metric-active-week">2026-W40</h3>
+        </div>
+        <div class="metric-badge">📅</div>
+      </div>
+    </section>
+
+    <!-- Tab Navigation -->
+    <nav class="nav-tabs" aria-label="Dashboard views">
+      <button class="tab-btn active" data-tab="pulse" id="tab-btn-pulse">
+        <span>📄</span>
+        <span>Weekly Pulse</span>
+      </button>
+      <button class="tab-btn" data-tab="analytics" id="tab-btn-analytics">
+        <span>📊</span>
+        <span>Theme &amp; Sentiment Matrix</span>
+      </button>
+      <button class="tab-btn" data-tab="reviews" id="tab-btn-reviews">
+        <span>🔍</span>
+        <span>Real Reviews Explorer</span>
+      </button>
+      <button class="tab-btn" data-tab="controller" id="tab-btn-controller">
+        <span>⚡</span>
+        <span>Agent Controller &amp; Terminal</span>
+      </button>
+    </nav>
+
+    <!-- TAB 1: WEEKLY PULSE -->
+    <main id="tab-pulse" class="tab-content active">
+      <div class="pulse-header-bar">
+        <div class="week-selector-wrapper">
+          <label for="week-selector">Select Week:</label>
+          <select id="week-selector" class="select-input">
+            <option value="2026-W40">2026-W40</option>
+          </select>
+        </div>
+
+        <div class="header-actions">
+          <button id="btn-copy-markdown" class="btn btn-secondary">
+            <span>📋</span>
+            <span>Copy Markdown</span>
+          </button>
+          <a id="btn-open-doc" href="#" target="_blank" class="btn btn-secondary" style="display:none;">
+            <span>📑</span>
+            <span>Open in Google Docs</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- MCP Delivery & Approvals Banner -->
+      <section id="delivery-approval-banner" class="delivery-approval-banner">
+        <div class="delivery-info">
+          <span class="delivery-icon">🛡️</span>
+          <div class="delivery-text">
+            <h4>Google Workspace Delivery &amp; Approvals (MCP Server)</h4>
+            <p>Publish weekly pulses to Google Docs and dispatch email drafts via Gmail with verifiable human approval.</p>
+          </div>
+        </div>
+        <div class="delivery-buttons">
+          <a id="btn-approve-doc" href="#" target="_blank" class="btn-approval" style="display:none;">
+            <span>📝</span>
+            <span>Approve Doc Append</span>
+          </a>
+          <a id="btn-approve-gmail" href="#" target="_blank" class="btn-approval" style="display:none;">
+            <span>✉️</span>
+            <span>Approve Gmail Send</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- Executive Summary Box -->
+      <section class="exec-summary-card">
+        <h4>Executive Summary</h4>
+        <p id="exec-summary-text">Loading executive summary...</p>
+      </section>
+
+      <!-- Top Themes -->
+      <h3 class="section-title">
+        <span>📊</span>
+        <span>Top 3 Themes This Week</span>
+      </h3>
+      <div id="themes-container" class="themes-grid">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- User Quotes -->
+      <h3 class="section-title">
+        <span>💬</span>
+        <span>Verbatim Real User Quotes</span>
+      </h3>
+      <div id="quotes-container" class="quotes-grid">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Action Ideas -->
+      <h3 class="section-title">
+        <span>💡</span>
+        <span>3 Concrete Action Ideas</span>
+      </h3>
+      <div id="actions-container" class="actions-grid">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Raw Markdown Viewer -->
+      <details style="margin-top: 2rem; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+        <summary style="font-weight: 600; cursor: pointer; color: var(--text-muted);">View Raw Markdown Output</summary>
+        <pre id="raw-markdown-text" style="margin-top: 1rem; font-family: var(--font-mono); font-size: 0.82rem; color: #a5b4fc; white-space: pre-wrap; word-break: break-all;"></pre>
+      </details>
+    </main>
+
+    <!-- TAB 2: ANALYTICS -->
+    <section id="tab-analytics" class="tab-content">
+      <h3 class="section-title">
+        <span>📈</span>
+        <span>Theme Distribution &amp; Sentiment Insights</span>
+      </h3>
+
+      <div class="analytics-grid">
+        <div class="analytics-card">
+          <h4>Reviews Volume by Theme</h4>
+          <div id="analytics-themes-list">
+            <!-- Theme bars -->
+          </div>
+        </div>
+
+        <div class="analytics-card">
+          <h4>Overall Sentiment Breakdown</h4>
+          <div style="margin-bottom: 1.5rem;">
+            <div class="bar-labels">
+              <span style="color:var(--groww-green);">Positive</span>
+              <span id="sent-pos-val">0</span>
+            </div>
+            <div class="bar-track"><div id="sent-pos-bar" class="bar-fill positive" style="width: 0%"></div></div>
+          </div>
+          <div style="margin-bottom: 1.5rem;">
+            <div class="bar-labels">
+              <span style="color:var(--accent-amber);">Neutral</span>
+              <span id="sent-neu-val">0</span>
+            </div>
+            <div class="bar-track"><div id="sent-neu-bar" class="bar-fill neutral" style="width: 0%"></div></div>
+          </div>
+          <div style="margin-bottom: 1.5rem;">
+            <div class="bar-labels">
+              <span style="color:var(--accent-rose);">Negative</span>
+              <span id="sent-neg-val">0</span>
+            </div>
+            <div class="bar-track"><div id="sent-neg-bar" class="bar-fill negative" style="width: 0%"></div></div>
+          </div>
+
+          <h4 style="margin-top: 2rem;">Store Rating Distribution</h4>
+          <div id="analytics-ratings-list">
+            <!-- Rating bars -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: REVIEW EXPLORER -->
+    <section id="tab-reviews" class="tab-content">
+      <h3 class="section-title">
+        <span>🔍</span>
+        <span>Mobile Store Review Feed</span>
+      </h3>
+
+      <div class="filter-bar">
+        <input type="text" id="reviews-search-input" class="search-input" placeholder="Search keywords (e.g. 'KYC', 'crash', 'UPI', author)...">
+        
+        <select id="filter-sentiment" class="select-input">
+          <option value="">All Sentiments</option>
+          <option value="positive">Positive</option>
+          <option value="neutral">Neutral</option>
+          <option value="negative">Negative</option>
+        </select>
+
+        <select id="filter-rating" class="select-input">
+          <option value="">All Ratings</option>
+          <option value="5">5 Stars</option>
+          <option value="4">4 Stars</option>
+          <option value="3">3 Stars</option>
+          <option value="2">2 Stars</option>
+          <option value="1">1 Star</option>
+        </select>
+
+        <select id="filter-theme" class="select-input">
+          <option value="">All Themes</option>
+          <option value="Onboarding / KYC">Onboarding / KYC</option>
+          <option value="App Performance / Bugs">App Performance / Bugs</option>
+          <option value="Payments / UPI">Payments / UPI</option>
+          <option value="Statements / Reports">Statements / Reports</option>
+          <option value="Withdrawals / Funds">Withdrawals / Funds</option>
+        </select>
+      </div>
+
+      <div id="reviews-list-container" class="reviews-container">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+        <button id="btn-prev-page" class="btn btn-secondary">Previous</button>
+        <span id="reviews-page-indicator" style="font-size: 0.85rem; color: var(--text-muted);">Page 1</span>
+        <button id="btn-next-page" class="btn btn-secondary">Next</button>
+      </div>
+    </section>
+
+    <!-- TAB 4: AGENT CONTROLLER & TERMINAL -->
+    <section id="tab-controller" class="tab-content">
+      <h3 class="section-title">
+        <span>⚡</span>
+        <span>Agent Controller &amp; Pipeline Execution</span>
+      </h3>
+
+      <div class="controller-grid">
+        <div class="controller-form-card">
+          <h4>Trigger Pipeline Execution</h4>
+          <form id="form-trigger-controller">
+            <div class="form-group">
+              <label for="ctrl-input-week">ISO Week (Optional, e.g. 2026-W40):</label>
+              <input type="text" id="ctrl-input-week" placeholder="Leave blank for current week">
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="ctrl-check-dryrun" checked>
+                <span>Dry Run (Skip live Google Docs / Gmail delivery)</span>
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="ctrl-check-scrapeonly">
+                <span>Scrape Only (Skip LLM &amp; pulse generation)</span>
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">
+              <span>🚀</span>
+              <span>Execute Pipeline</span>
+            </button>
+          </form>
+        </div>
+
+        <div class="terminal-window">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="terminal-dot"></span>
+              <span class="terminal-dot yellow"></span>
+              <span class="terminal-dot green"></span>
+            </div>
+            <span class="terminal-title">AGENT RUNNER CONSOLE</span>
+            <span id="pipeline-status-badge" class="status-pill">IDLE</span>
+          </div>
+          <div id="terminal-logs" class="terminal-body">
+            <div class="log-entry">Waiting for pipeline trigger...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Trigger Modal Dialog -->
+    <dialog id="trigger-modal" class="custom-modal">
+      <h3 style="font-family: var(--font-heading); font-size: 1.25rem; margin-bottom: 1rem;">Run Weekly Pulse Pipeline</h3>
+      <form id="form-trigger-modal">
+        <div class="form-group">
+          <label for="modal-input-week">Target Week (e.g. 2026-W40):</label>
+          <input type="text" id="modal-input-week" placeholder="Leave empty for current week">
+        </div>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="modal-check-dryrun" checked>
+            <span>Dry Run (Local files only, skip live MCP delivery)</span>
+          </label>
+        </div>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="modal-check-scrapeonly">
+            <span>Scrape Only</span>
+          </label>
+        </div>
+        <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem;">
+          <button type="button" id="btn-close-modal" class="btn btn-secondary">Cancel</button>
+          <button type="submit" class="btn btn-primary">Start Run</button>
+        </div>
+      </form>
+    </dialog>
+  </div>
+
+  <script src="/static/app.js?v=3"></script>
+</body>
+</html>

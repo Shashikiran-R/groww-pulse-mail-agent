@@ -1,0 +1,15 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.git/
+.gitignore
+.env
+.pytest_cache/
+.coverage
+htmlcov/
+tests/
+scratch/
+stitch_groww_review_pulse_dashboard/
