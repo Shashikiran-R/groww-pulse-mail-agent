@@ -32,5 +32,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:${PORT:-8000}/api/status || exit 1
 
-# Start uvicorn with dynamic $PORT support for Railway
-CMD ["sh", "-c", "uvicorn src.web.app:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Start web dashboard and API via run_web.py (handles dynamic $PORT automatically)
+CMD ["python", "run_web.py"]

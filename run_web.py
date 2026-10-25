@@ -20,7 +20,10 @@ def main():
     parser = argparse.ArgumentParser(description="Start Groww Pulse Agent Web Dashboard & API")
     parser.add_argument("--host", type=str, default="0.0.0.0", help="Host interface (default: 0.0.0.0)")
     env_port = os.environ.get("PORT")
-    default_port = int(env_port) if env_port else 8000
+    try:
+        default_port = int(env_port.strip()) if env_port else 8000
+    except (ValueError, TypeError):
+        default_port = 8000
     parser.add_argument("--port", type=int, default=default_port, help="Port to listen on (default: 8000)")
     parser.add_argument("--reload", action="store_true", help="Enable auto-reload for development")
     args = parser.parse_args()
