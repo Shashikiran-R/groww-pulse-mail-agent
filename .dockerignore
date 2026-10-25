@@ -11,5 +11,6 @@ __pycache__/
 .coverage
 htmlcov/
 tests/
+test_*.py
 scratch/
 stitch_groww_review_pulse_dashboard/
