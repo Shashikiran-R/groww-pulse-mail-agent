@@ -82,7 +82,12 @@ aiagent/
 ├── run_web.py                  # Web application entrypoint
 ├── main.py                     # Pipeline CLI entrypoint
 ├── requirements.txt            # Python dependencies
-└── deployment-plan.md          # Comprehensive deployment guide
+└── docs/                       # Project documentation
+    ├── architecture.md         # System design & pipeline architecture
+    ├── deployment-plan.md      # Comprehensive deployment guide
+    ├── implementation.md       # Multi-phase implementation specs
+    ├── problemstatement.md     # Requirements & problem statement
+    └── design.md               # Dashboard UI design system
 ```
 
 ---
@@ -165,7 +170,7 @@ pytest -v
    - (Optional) Google OAuth credentials for automated email delivery.
 6. Click **Deploy**. Your dashboard will be live at `https://<your-railway-app>.up.railway.app`.
 
-For persistent volume mounting or advanced configuration, see [deployment-plan.md](deployment-plan.md).
+For persistent volume mounting or advanced configuration, see [deployment-plan.md](docs/deployment-plan.md).
 
 ---
 
