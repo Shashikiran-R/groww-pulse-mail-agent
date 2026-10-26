@@ -9,6 +9,11 @@
 [![Tests](https://img.shields.io/badge/Tests-101%20Passed-22C55E?style=flat&logo=pytest&logoColor=white)](https://docs.pytest.org)
 
 An autonomous AI review intelligence agent and telemetry dashboard designed for fintech product, growth, and engineering teams. The agent continuously ingests customer reviews from both the **Google Play Store** and **Apple App Store** for **Groww**, performs multi-stage NLP cleaning, TF-IDF spam filtering, Bayesian language detection, and a **two-tiered hybrid ML + LLM theme clustering ensemble**, synthesizes executive weekly pulse notes, and publishes them across familiar enterprise surfaces—**Google Docs** and **Gmail**—via an isolated **Model Context Protocol (MCP)** server with Human-in-the-Loop (HITL) safety approvals.
+---
+
+## Screenshots from the project
+<img width="1501" height="822" alt="image" src="https://github.com/user-attachments/assets/52337a7c-0a03-4556-8e07-f9b0cfefbf43" /> 
+<img width="1500" height="434" alt="image" src="https://github.com/user-attachments/assets/8d5f31bb-eb71-417a-aa44-9099bff2ba30" />
 
 ---
 
